@@ -56,7 +56,7 @@ int main(int argc,char **argv){
 				A(i, l) = A(maxind, l);
 				A(maxind, l) = tmp;
 			}
-			double c = A(k, i) / A(i, i);
+			double c = A(k, i) / (A(i, i) + 1e-9);
 			for (h = i; h <= N; h++) {
 				A(k, h) = A(k, h) - c * A(i, h);
 			}
@@ -64,13 +64,13 @@ int main(int argc,char **argv){
 		}
 	}
 	/* reverse substitution */
-	X[N - 1] = A(N - 1, N) / (A(N - 1, N - 1) + 1e-7);
+	X[N - 1] = A(N - 1, N) / (A(N - 1, N - 1) + 1e-9);
 	#pragma omp parallel for private (i, j) schedule(dynamic) num_threads(NUM_THREADS)
 	for (i = N - 2; i >= 0; i--) {
 		for (j = i + 1; j < N; j++) {
 			A(i, N) -= A(i, j) * X[j];
 		}
-		X[i] = A(i, N) / (A(i, i) + 1e-7);
+		X[i] = A(i, N) / (A(i, i) + 1e-9);
 	}
 	wtime(&time1);
 	printf("Time in seconds=%gs\n",time1-time0);
